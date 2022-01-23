@@ -1,0 +1,13 @@
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: blue-green
+spec:
+  # The root service that clients use to connect to the destination application.
+  service: th3
+  # Services inside the namespace with their own selectors, endpoints and configuration.
+  backends:
+  - service: th3-blue
+    weight: 500m
+  - service: th3-green
+    weight: 500m
