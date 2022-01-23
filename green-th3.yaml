@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: th3-green
+  labels:
+    app: th3
+    color: green
+spec:
+  ports:
+  - targetPort: 8080
+    port: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: th3
+    color: green
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: th3-green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: th3
+      color: green
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: th3
+        color: green
+    spec:
+      containers:
+      - image: craigmdupree/th3:0.0.2
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /version
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 30
+        name: th3
+        ports:
+        - containerPort: 8000
